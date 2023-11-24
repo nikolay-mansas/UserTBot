@@ -1,16 +1,38 @@
-# This is a sample Python script.
+import configparser
+import telebot
+import logging
+import time
+import sys
+import os
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+config = configparser.ConfigParser()
+config.read("bot/config.ini")
+log_dir = config["SCRIPT"]["log_dir"]
+if log_dir == "" or log_dir == " ":
+    raise Exception('Log_dir in file "bot/config.ini" is null')
+log_level = config["SCRIPT"]["log_level"]
+if log_level == "" or log_level == " ":
+    raise Exception('Log_level in file "bot/config.ini" is null')
+print(log_level.lower())
+match log_level.lower():
+    case "info":
+        log_level = logging.INFO
+    case "debug":
+        log_level = logging.DEBUG
+    case _:
+        raise Exception(f"Log level not defined, you input log level: {log_level.lower()}")
 
+try:
+    os.mkdir(log_dir)
+except FileExistsError:
+    pass
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
-
-
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(message)s",
+    handlers=[
+        logging.FileHandler(f"{log_dir}/{time.time()}.log"),
+        logging.StreamHandler(sys.stdout)
+    ]
+)
+logging.info("Initialization and code loading is successful, telegram bot loading.")
