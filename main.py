@@ -21,6 +21,11 @@ try:
 except TypeError:
     raise Exception('Api_id in file "bot/config.ini" is type error')
 
+phone_number = config["BOT"]["phone_number"]
+if phone_number == "" or phone_number == " ":
+    raise Exception('Phone_number in file "bot/config.ini" is null')
+
+
 log_dir = config["SCRIPT"]["log_dir"]
 if log_dir == "" or log_dir == " ":
     raise Exception('Log_dir in file "bot/config.ini" is null')
@@ -56,4 +61,4 @@ logging.basicConfig(
 
 logging.info("Initialization and code loading is successful, telegram bot loading.")
 
-asyncio.run(bot.start_bot(api_id=api_id, api_hash=api_hash, version=version, logging=logging))
+asyncio.run(bot.start_bot(api_id=api_id, api_hash=api_hash, phone_number=phone_number, version=version, logging=logging))
